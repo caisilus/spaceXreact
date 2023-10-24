@@ -58,7 +58,7 @@ function Map(props){
             .enter()
             .append("path")
             .attr("d", path) 
-            .attr("id", (d) => { return d.id })
+            .attr("id", (d) => { return `i${d.id}` })
             .attr("class", "launchpad")
         
         const zoom = d3.zoom()

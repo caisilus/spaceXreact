@@ -28,6 +28,6 @@
 }
 
 .highlightedLaunchpad {
-    fill: red;
-    opacity: .7;
+    fill: blue;
+    opacity: 1.0;
 }
