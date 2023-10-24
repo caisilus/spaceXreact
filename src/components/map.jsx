@@ -2,6 +2,14 @@ import * as d3 from "d3";
 import * as Geo from "../geo.json";
 import {useRef, useEffect} from "react";
 
+function launchpadToGeojson(launchpad) {
+    return { "type": "Feature", 
+             "geometry": {"type": "Point", "coordinates": [launchpad.longitude, launchpad.latitude]},
+             "properties": {"name": launchpad.name},
+             "id": launchpad.id
+           }
+}
+
 function Map(props){
     const width = 1000;
     const height = 600;
@@ -12,7 +20,12 @@ function Map(props){
         left: 100
     };
     const containerRef = useRef(null);
-    useEffect(()=> { const svg = d3.select(containerRef.current).append("svg");
+
+    useEffect(()=> { 
+        let svg = d3.select(containerRef.current).select("svg")
+        if (svg.empty()) {
+            svg = d3.select(containerRef.current).append("svg")
+        }
         svg.selectAll("*").remove();
         svg.attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom )
@@ -25,13 +38,29 @@ function Map(props){
             .translate([width/2 - margin.left, height/2 - margin.top]);
         const g = svg.append("g");
 
+        const path = d3.geoPath().projection(projection)
+
         g.selectAll("path")
             .data(Geo.features)
             .enter()
             .append("path")
             .attr("class", "topo")
-            .attr("d", d3.geoPath().projection(projection))
+            .attr("d", path)
             .style("opacity", .7)
+
+        const launchpadsGeoData = props.launchpads.map(launchpadToGeojson)
+        console.log(launchpadsGeoData)
+
+        g.append("g")
+            .attr("id", "launchpads")
+            .selectAll("path")
+            .data(launchpadsGeoData) 
+            .enter()
+            .append("path")
+            .attr("d", path) 
+            .attr("id", (d) => { return d.id })
+            .attr("class", "launchpad")
+        
         const zoom = d3.zoom()
             .scaleExtent([1, 8])
             .on('zoom', function(event) {
@@ -39,9 +68,7 @@ function Map(props){
                     .attr('transform', event.transform);
             });
 
-        svg.call(zoom); }, []);
-
-
+        svg.call(zoom); }, [props.launchpads]);
 
     return(
         <div className="mapContainer map" ref={containerRef}>
