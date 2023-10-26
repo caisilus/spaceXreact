@@ -4,7 +4,6 @@ import {useEffect, useState} from "react";
 import {SpaceX} from "../api/spacex";
 
 function App(){
-
     const [launches, setLaunches] = useState([]);
     const [launchpads, setLaunchpads] = useState([]);
     const spacex = new SpaceX();

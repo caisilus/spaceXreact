@@ -49,7 +49,6 @@ function Map(props){
             .style("opacity", .7)
 
         const launchpadsGeoData = props.launchpads.map(launchpadToGeojson)
-        console.log(launchpadsGeoData)
 
         g.append("g")
             .attr("id", "launchpads")
